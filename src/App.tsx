@@ -166,18 +166,18 @@ export function App() {
       {/* Main Container with generous spacing */}
       <main className="w-full max-w-2xl mx-auto px-4 sm:px-6 my-auto z-10 py-2 sm:py-6">
         
-        {/* Header Tagline & Micro Badge */}
-        <div className="flex items-center justify-between px-1 mb-3 sm:mb-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary-light dark:text-ink-primary-dark">
+        {/* Header Title Area with Generous Padding */}
+        <div className="py-6 sm:py-8 px-2 sm:px-4 mb-3 sm:mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-ink-primary-light dark:text-ink-primary-dark">
               Position Calculator
             </h1>
-            <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-medium">
-              <Sparkles className="w-2.5 h-2.5" /> Ad-Free
+            <span className="inline-flex items-center gap-1 text-[11px] font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-semibold">
+              <Sparkles className="w-3 h-3" /> Ad-Free
             </span>
           </div>
-          <span className="text-[11px] font-mono text-ink-muted-light dark:text-ink-muted-dark hidden sm:inline">
-            Zero Guesswork
+          <span className="text-xs font-mono text-ink-muted-light dark:text-ink-muted-dark">
+            Zero Guesswork • Sub-ms Compute
           </span>
         </div>
 
@@ -296,12 +296,12 @@ export function App() {
                 </div>
               </div>
 
-              {/* Calculate Button */}
-              <div className="pt-2">
+              {/* Big Calculate Button */}
+              <div className="pt-4 sm:pt-5">
                 <button
                   type="button"
                   onClick={() => handleCalculate(true)}
-                  className="apple-glass-btn w-full h-13 sm:h-12 px-6 rounded-2xl text-white font-semibold text-sm transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                  className="apple-glass-btn w-full h-14 sm:h-15 px-8 rounded-2xl text-white font-bold text-base sm:text-lg tracking-wide shadow-lg hover:shadow-xl transition-all duration-200 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2.5"
                 >
                   <span>Calculate</span>
                 </button>
