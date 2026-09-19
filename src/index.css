@@ -91,34 +91,35 @@
     animation: number-pop 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  /* Apple Liquid Glass Styling */
+  /* Apple Liquid Glass Container */
   .apple-glass {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(45px) saturate(190%);
-    -webkit-backdrop-filter: blur(45px) saturate(190%);
-    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(50px) saturate(190%);
+    -webkit-backdrop-filter: blur(50px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
     box-shadow: 
-      0 20px 50px -15px rgba(0, 0, 0, 0.06),
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+      0 24px 60px -15px rgba(0, 0, 0, 0.07),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
       inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);
   }
 
   .dark .apple-glass {
-    background: rgba(18, 18, 22, 0.68);
-    backdrop-filter: blur(50px) saturate(200%);
-    -webkit-backdrop-filter: blur(50px) saturate(200%);
+    background: rgba(18, 18, 22, 0.72);
+    backdrop-filter: blur(55px) saturate(200%);
+    -webkit-backdrop-filter: blur(55px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.09);
     box-shadow: 
-      0 30px 60px -15px rgba(0, 0, 0, 0.7),
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
+      0 35px 70px -15px rgba(0, 0, 0, 0.75),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.16),
       inset 0 -1px 1px 0 rgba(0, 0, 0, 0.5);
   }
 
+  /* Apple Liquid Glass Input Fields */
   .apple-glass-input {
-    background: rgba(244, 244, 247, 0.7);
+    background: rgba(244, 244, 247, 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 0, 0, 0.07);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -131,7 +132,7 @@
   }
 
   .apple-glass-input:hover {
-    border-color: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.35);
   }
 
   .apple-glass-input:focus {
@@ -139,13 +140,35 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
 
+  /* Apple Liquid Glass Metric Capsule / Pill */
+  .apple-glass-pill {
+    background: rgba(244, 244, 248, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dark .apple-glass-pill {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .apple-glass-pill:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Calculate Button */
   .apple-glass-btn {
     position: relative;
     overflow: hidden;
     background: linear-gradient(180deg, #10b981 0%, #059669 100%);
     box-shadow: 
-      0 4px 20px -2px rgba(16, 185, 129, 0.45),
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+      0 6px 24px -2px rgba(16, 185, 129, 0.5),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
     transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -156,19 +179,19 @@
     left: 0;
     width: 45%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
     transform: translateX(-150%) skewX(-20deg);
   }
 
   .apple-glass-btn:hover::after {
-    animation: sheen 1s ease-in-out;
+    animation: sheen 1.1s ease-in-out;
   }
 
   .apple-glass-btn:hover {
     background: linear-gradient(180deg, #059669 0%, #047857 100%);
     box-shadow: 
-      0 8px 28px -2px rgba(16, 185, 129, 0.6),
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.55);
+      0 8px 30px -2px rgba(16, 185, 129, 0.65),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.6);
     transform: translateY(-1px);
   }
 
