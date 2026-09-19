@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent auto-zoom on iOS inputs */
+  @media screen and (max-width: 768px) {
+    input, select {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.2);
+    border-radius: 9999px;
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -25px) scale(1.08);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-35px, 25px) scale(1.05);
+  }
+  66% {
+    transform: translate(25px, -15px) scale(0.92);
+  }
+}
+
+@keyframes sheen {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+@keyframes number-pop {
+  0% {
+    transform: scale(0.97);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .animate-float-slow {
+    animation: float-slow 18s ease-in-out infinite;
+  }
+
+  .animate-float-reverse {
+    animation: float-reverse 22s ease-in-out infinite;
+  }
+
+  .animate-number-pop {
+    animation: number-pop 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Apple Liquid Glass Styling */
+  .apple-glass {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(45px) saturate(190%);
+    -webkit-backdrop-filter: blur(45px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow: 
+      0 20px 50px -15px rgba(0, 0, 0, 0.06),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .apple-glass {
+    background: rgba(18, 18, 22, 0.68);
+    backdrop-filter: blur(50px) saturate(200%);
+    -webkit-backdrop-filter: blur(50px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 
+      0 30px 60px -15px rgba(0, 0, 0, 0.7),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.5);
+  }
+
+  .apple-glass-input {
+    background: rgba(244, 244, 247, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dark .apple-glass-input {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .apple-glass-input:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .apple-glass-input:focus {
+    border-color: rgba(59, 130, 246, 0.7);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+
+  .apple-glass-btn {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    box-shadow: 
+      0 4px 20px -2px rgba(16, 185, 129, 0.45),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .apple-glass-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: translateX(-150%) skewX(-20deg);
+  }
+
+  .apple-glass-btn:hover::after {
+    animation: sheen 1s ease-in-out;
+  }
+
+  .apple-glass-btn:hover {
+    background: linear-gradient(180deg, #059669 0%, #047857 100%);
+    box-shadow: 
+      0 8px 28px -2px rgba(16, 185, 129, 0.6),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.55);
+    transform: translateY(-1px);
+  }
+
+  .apple-glass-btn:active {
+    transform: translateY(1px) scale(0.98);
+  }
+}
