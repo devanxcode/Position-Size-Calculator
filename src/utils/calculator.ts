@@ -9,7 +9,7 @@ function convertToAccountCurrency(amount: number, fromCurrency: string, toCurren
 }
 
 export function calculatePositionSize(input: CalculationInput): CalculationResult {
-  const { accountCurrency, accountBalance, riskPercentage, stopLossPips, pair } = input;
+  const { accountCurrency, accountBalance, riskPercentage, stopLossPips, pair, customPrice } = input;
 
   const balance = Math.max(0, accountBalance || 0);
   const riskPct = Math.max(0, riskPercentage || 0);
@@ -25,9 +25,11 @@ export function calculatePositionSize(input: CalculationInput): CalculationResul
       standardLots: 0,
       miniLots: 0,
       microLots: 0,
-      pipValue: 0,
     };
   }
+
+  // Active price to use
+  const priceToUse = (customPrice && customPrice > 0) ? customPrice : pair.currentPrice;
 
   // 2. Pip value per 1 standard lot
   let pipValuePerStandardLot = 0;
@@ -36,18 +38,17 @@ export function calculatePositionSize(input: CalculationInput): CalculationResul
   if (pair.quoteCurrency === accountCurrency) {
     pipValuePerStandardLot = rawPipValueInQuote;
   } else if (pair.baseCurrency === accountCurrency) {
-    pipValuePerStandardLot = rawPipValueInQuote / pair.currentPrice;
+    pipValuePerStandardLot = priceToUse > 0 ? (rawPipValueInQuote / priceToUse) : rawPipValueInQuote;
   } else {
     pipValuePerStandardLot = convertToAccountCurrency(rawPipValueInQuote, pair.quoteCurrency, accountCurrency);
   }
 
   // 3. Position Size & Lots
-  const standardLots = amountAtRisk / (slPips * pipValuePerStandardLot);
+  const standardLots = pipValuePerStandardLot > 0 ? (amountAtRisk / (slPips * pipValuePerStandardLot)) : 0;
   const safeStandardLots = isFinite(standardLots) && !isNaN(standardLots) ? standardLots : 0;
   const positionSizeUnits = safeStandardLots * pair.contractSize;
   const miniLots = safeStandardLots * 10;
   const microLots = safeStandardLots * 100;
-  const pipValue = safeStandardLots * pipValuePerStandardLot;
 
   return {
     amountAtRisk,
@@ -55,6 +56,5 @@ export function calculatePositionSize(input: CalculationInput): CalculationResul
     standardLots: safeStandardLots,
     miniLots,
     microLots,
-    pipValue,
   };
 }

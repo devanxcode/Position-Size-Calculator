@@ -3,7 +3,7 @@ import type { AccountCurrency, CurrencyPair, CalculationResult } from './types/t
 import { CURRENCY_PAIRS, ACCOUNT_CURRENCIES } from './constants/instruments';
 import { calculatePositionSize } from './utils/calculator';
 import { formatCurrency, formatLots, formatUnits } from './utils/formatters';
-import { Sun, Moon, Copy, Check, ArrowUpRight, Sparkles, ChevronDown } from 'lucide-react';
+import { Sun, Moon, Copy, Check, ArrowUpRight, ArrowDownCircle } from 'lucide-react';
 
 export function App() {
   // Theme state
@@ -42,16 +42,29 @@ export function App() {
     return () => clearInterval(timer);
   }, []);
 
-  // Form State (Exact 5 clean BabyPips options)
+  // Form State (Exact BabyPips options)
   const [accountCurrency, setAccountCurrency] = useState<AccountCurrency>('USD');
   const [accountBalance, setAccountBalance] = useState<string>('10000');
   const [riskPercentage, setRiskPercentage] = useState<string>('1');
   const [stopLossPips, setStopLossPips] = useState<string>('20');
   const [selectedPairId, setSelectedPairId] = useState<string>('EURUSD');
+  const [customPrice, setCustomPrice] = useState<string>('');
 
   // Selected Pair
   const selectedPair: CurrencyPair =
     CURRENCY_PAIRS.find((p) => p.id === selectedPairId) || CURRENCY_PAIRS[0];
+
+  // Whether ask price is needed (conditional for non-USD quote pairs, e.g. USD/CAD, USD/JPY, etc.)
+  const needsAskPrice = selectedPair.quoteCurrency !== accountCurrency;
+
+  // Auto-fill reference price when switching to a pair that requires price conversion
+  useEffect(() => {
+    if (needsAskPrice) {
+      setCustomPrice(selectedPair.currentPrice.toFixed(selectedPair.pipDecimals));
+    } else {
+      setCustomPrice('');
+    }
+  }, [selectedPairId, accountCurrency]);
 
   // Results State
   const [result, setResult] = useState<CalculationResult>(() => {
@@ -74,6 +87,7 @@ export function App() {
     const balanceNum = parseFloat(accountBalance) || 0;
     const riskNum = parseFloat(riskPercentage) || 0;
     const slNum = parseFloat(stopLossPips) || 0;
+    const priceNum = parseFloat(customPrice) || undefined;
 
     const res = calculatePositionSize({
       accountCurrency,
@@ -81,16 +95,17 @@ export function App() {
       riskPercentage: riskNum,
       stopLossPips: slNum,
       pair: selectedPair,
+      customPrice: priceNum,
     });
     setResult(res);
 
-    // Trigger subtle number pulse animation
+    // Trigger subtle number pop animation
     setIsCalculatedAnim(false);
     requestAnimationFrame(() => {
       setIsCalculatedAnim(true);
     });
 
-    // Smooth scroll down on mobile if "Calculate" is tapped
+    // Smooth scroll down on mobile when "Calculate" is pressed
     if (scrollOnMobile && window.innerWidth < 768 && resultsRef.current) {
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -101,7 +116,7 @@ export function App() {
   // Real-time calculation on input changes
   useEffect(() => {
     handleCalculate(false);
-  }, [accountCurrency, accountBalance, riskPercentage, stopLossPips, selectedPairId]);
+  }, [accountCurrency, accountBalance, riskPercentage, stopLossPips, selectedPairId, customPrice]);
 
   const handleCopy = () => {
     if (result.standardLots > 0) {
@@ -119,7 +134,7 @@ export function App() {
       <div className="pointer-events-none fixed bottom-[-10%] right-[-10%] w-[300px] sm:w-[580px] h-[300px] sm:h-[580px] bg-gradient-to-br from-teal-500/15 via-blue-500/15 to-purple-500/10 blur-[80px] sm:blur-[130px] rounded-full animate-float-reverse -z-10" />
 
       {/* Floating Island Navigation Dock */}
-      <header className="sticky top-4 sm:top-6 z-40 w-full flex justify-center px-4 mb-4 sm:mb-8">
+      <header className="sticky top-4 sm:top-6 z-40 w-full flex justify-center px-4 mb-2 sm:mb-4">
         <div className="apple-glass flex items-center justify-between w-full max-w-2xl px-4 sm:px-5 py-2.5 sm:py-3 rounded-full transition-all duration-300">
           <div className="flex items-center gap-2.5">
             <a
@@ -163,35 +178,32 @@ export function App() {
         </div>
       </header>
 
-      {/* Main Container with generous spacing */}
-      <main className="w-full max-w-2xl mx-auto px-4 sm:px-6 my-auto z-10 py-2 sm:py-6">
+      {/* Main Container with generous padding */}
+      <main className="w-full max-w-2xl mx-auto px-4 sm:px-6 my-auto z-10 py-4 sm:py-6">
         
         {/* Header Title Area with Generous Padding */}
-        <div className="py-6 sm:py-8 px-2 sm:px-4 mb-3 sm:mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="py-6 sm:py-8 px-2 sm:px-4 mb-2 sm:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-ink-primary-light dark:text-ink-primary-dark">
               Position Calculator
             </h1>
-            <span className="inline-flex items-center gap-1 text-[11px] font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-semibold">
-              <Sparkles className="w-3 h-3" /> Ad-Free
-            </span>
           </div>
           <span className="text-xs font-mono text-ink-muted-light dark:text-ink-muted-dark">
-            Zero Guesswork • Sub-ms Compute
+            Zero Ads • Sub-ms Compute
           </span>
         </div>
 
-        {/* Liquid Glass Card */}
+        {/* Pure & Simple Liquid Glass Card */}
         <div className="apple-glass rounded-[28px] sm:rounded-[36px] p-6 sm:p-9 md:p-11 transition-all duration-300">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-11 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-11 lg:gap-14 items-start">
             
-            {/* Left Column: Pure 5 Inputs (Comfortable Touch Targets) */}
+            {/* Left Column: BabyPips Inputs */}
             <div className="space-y-4 sm:space-y-4.5">
               
               {/* 1. Account Currency */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
+                <label className="block text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
                   Account Currency
                 </label>
                 <div className="relative">
@@ -202,7 +214,7 @@ export function App() {
                   >
                     {ACCOUNT_CURRENCIES.map((curr) => (
                       <option key={curr.code} value={curr.code} className="bg-surface-light dark:bg-surface-dark">
-                        {curr.code} ({curr.symbol})
+                        {curr.code}
                       </option>
                     ))}
                   </select>
@@ -216,7 +228,7 @@ export function App() {
 
               {/* 2. Account Balance */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
+                <label className="block text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
                   Account Balance
                 </label>
                 <input
@@ -233,7 +245,7 @@ export function App() {
 
               {/* 3. Risk Percentage */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
+                <label className="block text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
                   Risk Percentage
                 </label>
                 <div className="relative">
@@ -256,7 +268,7 @@ export function App() {
 
               {/* 4. Stop Loss (pips) */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
+                <label className="block text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
                   Stop Loss (pips)
                 </label>
                 <input
@@ -273,7 +285,7 @@ export function App() {
 
               {/* 5. Currency Pair */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
+                <label className="block text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
                   Currency Pair
                 </label>
                 <div className="relative">
@@ -284,7 +296,7 @@ export function App() {
                   >
                     {CURRENCY_PAIRS.map((pair) => (
                       <option key={pair.id} value={pair.id} className="bg-surface-light dark:bg-surface-dark">
-                        {pair.symbol} — {pair.name}
+                        {pair.symbol}
                       </option>
                     ))}
                   </select>
@@ -296,8 +308,26 @@ export function App() {
                 </div>
               </div>
 
+              {/* 6. Current [PAIR] Ask Price (Conditionally shown for non-USD quote pairs, e.g. USD/CAD, USD/JPY, etc.) */}
+              {needsAskPrice && (
+                <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                  <label className="block text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark mb-1.5">
+                    Current <span className="bg-amber-400/20 text-amber-500 dark:text-amber-400 px-1.5 py-0.5 rounded font-semibold">{selectedPair.symbol}</span> Ask Price
+                  </label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    step="any"
+                    value={customPrice}
+                    onChange={(e) => setCustomPrice(e.target.value)}
+                    placeholder="0"
+                    className="apple-glass-input w-full h-12 sm:h-11 px-4 rounded-2xl text-sm font-mono text-ink-primary-light dark:text-ink-primary-dark focus:outline-none"
+                  />
+                </div>
+              )}
+
               {/* Big Calculate Button */}
-              <div className="pt-4 sm:pt-5">
+              <div className="pt-3 sm:pt-4">
                 <button
                   type="button"
                   onClick={() => handleCalculate(true)}
@@ -309,35 +339,44 @@ export function App() {
 
             </div>
 
-            {/* Mobile Divider */}
-            <div className="md:hidden flex items-center justify-center my-2">
-              <div className="w-full h-px bg-black/[0.06] dark:bg-white/[0.08]" />
-              <div className="px-3 text-ink-muted-light dark:text-ink-muted-dark">
-                <ChevronDown className="w-4 h-4 animate-bounce" />
-              </div>
-              <div className="w-full h-px bg-black/[0.06] dark:bg-white/[0.08]" />
-            </div>
-
-            {/* Right Column: Structured Results */}
-            <div ref={resultsRef} className="space-y-4 pt-1 md:pt-0">
+            {/* Right Column: Clean & Simple BabyPips Results */}
+            <div ref={resultsRef} className="space-y-5 pt-4 md:pt-0 border-t md:border-t-0 border-black/[0.06] dark:border-white/[0.08]">
               
               {/* Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-black/[0.06] dark:border-white/[0.08]">
-                <h2 className="text-base sm:text-lg font-bold tracking-tight text-ink-primary-light dark:text-ink-primary-dark">
+              <div className="flex items-center gap-2 pb-2.5 border-b border-black/[0.06] dark:border-white/[0.08]">
+                <h2 className="text-2xl font-bold tracking-tight text-ink-primary-light dark:text-ink-primary-dark">
                   Results
                 </h2>
-                <span className="text-xs font-mono text-emerald-500 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                  {selectedPair.symbol}
+                <ArrowDownCircle className="w-5 h-5 text-accent" />
+              </div>
+
+              {/* 1. Amount at Risk */}
+              <div className="border-b border-black/[0.06] dark:border-white/[0.08] pb-3.5">
+                <span className="text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark block mb-0.5">
+                  Amount at Risk
+                </span>
+                <span className={`text-2xl sm:text-3xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block ${isCalculatedAnim ? 'animate-number-pop' : ''}`}>
+                  {formatCurrency(result.amountAtRisk, accountCurrency)}
                 </span>
               </div>
 
-              {/* Hero Standard Lots Card */}
-              <div className="apple-glass-pill rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+              {/* 2. Position Size (units) */}
+              <div className="border-b border-black/[0.06] dark:border-white/[0.08] pb-3.5">
+                <span className="text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark block mb-0.5">
+                  Position Size (units)
+                </span>
+                <span className={`text-2xl sm:text-3xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block ${isCalculatedAnim ? 'animate-number-pop' : ''}`}>
+                  {formatUnits(result.positionSizeUnits)}
+                </span>
+              </div>
+
+              {/* 3. Standard Lots */}
+              <div className="border-b border-black/[0.06] dark:border-white/[0.08] pb-3.5 flex items-center justify-between">
                 <div>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark block mb-1">
+                  <span className="text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark block mb-0.5">
                     Standard Lots
                   </span>
-                  <span className={`text-3xl sm:text-4xl font-extrabold font-mono text-accent block leading-none ${isCalculatedAnim ? 'animate-number-pop' : ''}`}>
+                  <span className={`text-3xl sm:text-4xl font-extrabold font-mono text-accent block ${isCalculatedAnim ? 'animate-number-pop' : ''}`}>
                     {formatLots(result.standardLots)}
                   </span>
                 </div>
@@ -345,82 +384,42 @@ export function App() {
                 {result.standardLots > 0 && (
                   <button
                     onClick={handleCopy}
-                    className="p-3 rounded-xl apple-glass-input text-ink-secondary-light dark:text-ink-secondary-dark hover:text-accent transition-all cursor-pointer active:scale-90 flex items-center gap-1.5 text-xs font-medium"
+                    className="p-2.5 rounded-xl apple-glass-input text-ink-secondary-light dark:text-ink-secondary-dark hover:text-accent transition-all cursor-pointer active:scale-90 flex items-center gap-1.5 text-xs font-medium"
                     title="Copy standard lots"
                     aria-label="Copy standard lot size"
                   >
                     {copied ? (
                       <>
                         <Check className="w-4 h-4 text-emerald-500 animate-number-pop" />
-                        <span className="text-emerald-500 font-semibold text-[11px]">Copied</span>
+                        <span className="text-emerald-500 font-semibold text-xs">Copied</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-4 h-4" />
-                        <span className="hidden xs:inline text-[11px]">Copy</span>
+                        <span className="text-xs hidden xs:inline">Copy</span>
                       </>
                     )}
                   </button>
                 )}
               </div>
 
-              {/* 2x2 Grid of Refined Frosted Metric Capsules */}
-              <div className="grid grid-cols-2 gap-3">
-                
-                {/* Amount at Risk */}
-                <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark block mb-1">
-                    Capital at Risk
-                  </span>
-                  <span className={`text-lg sm:text-xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block ${isCalculatedAnim ? 'animate-number-pop' : ''}`}>
-                    {formatCurrency(result.amountAtRisk, accountCurrency)}
-                  </span>
-                </div>
-
-                {/* Position Units */}
-                <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark block mb-1">
-                    Position Units
-                  </span>
-                  <span className={`text-lg sm:text-xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block ${isCalculatedAnim ? 'animate-number-pop' : ''}`}>
-                    {formatUnits(result.positionSizeUnits)}
-                  </span>
-                </div>
-
-                {/* Mini Lots */}
-                <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark block mb-1">
-                    Mini Lots
-                  </span>
-                  <span className="text-lg sm:text-xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block">
-                    {result.miniLots > 0 ? result.miniLots.toFixed(2) : '0'}
-                  </span>
-                </div>
-
-                {/* Micro Lots */}
-                <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark block mb-1">
-                    Micro Lots
-                  </span>
-                  <span className="text-lg sm:text-xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block">
-                    {result.microLots > 0 ? result.microLots.toFixed(2) : '0'}
-                  </span>
-                </div>
-
+              {/* 4. Mini Lots */}
+              <div className="border-b border-black/[0.06] dark:border-white/[0.08] pb-3.5">
+                <span className="text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark block mb-0.5">
+                  Mini Lots
+                </span>
+                <span className="text-2xl sm:text-3xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block">
+                  {result.miniLots > 0 ? result.miniLots.toFixed(2) : '0'}
+                </span>
               </div>
 
-              {/* Pip Value Frosted Strip */}
-              <div className="apple-glass-pill rounded-2xl p-3.5 sm:p-4 flex items-center justify-between">
-                <div>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary-light dark:text-ink-secondary-dark block">
-                    Pip Value
-                  </span>
-                  <span className="text-[10px] text-ink-muted-light dark:text-ink-muted-dark">
-                    Per 1 pip movement
-                  </span>
-                </div>
-                <span className="text-sm sm:text-base font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark">
-                  {formatCurrency(result.pipValue, accountCurrency)} / pip
+              {/* 5. Micro Lots */}
+              <div className="pb-1">
+                <span className="text-xs font-medium text-ink-secondary-light dark:text-ink-secondary-dark block mb-0.5">
+                  Micro Lots
+                </span>
+                <span className="text-2xl sm:text-3xl font-bold font-mono text-ink-primary-light dark:text-ink-primary-dark block">
+                  {result.microLots > 0 ? result.microLots.toFixed(2) : '0'}
                 </span>
               </div>
 

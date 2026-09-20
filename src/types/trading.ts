@@ -18,6 +18,7 @@ export interface CalculationInput {
   riskPercentage: number;
   stopLossPips: number;
   pair: CurrencyPair;
+  customPrice?: number;
 }
 
 export interface CalculationResult {
@@ -26,5 +27,4 @@ export interface CalculationResult {
   standardLots: number;
   miniLots: number;
   microLots: number;
-  pipValue: number; // Value per pip tick for the trade (unfair advantage over BabyPips)
 }
